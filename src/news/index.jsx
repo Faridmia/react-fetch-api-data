@@ -40,23 +40,42 @@ export default class News {
     }
 
     next() {
-
+        if( this._isNext() ) {
+            this._currentPage++;
+            return this.getNews();
+        }
+        return false;
     }
 
     prev() {
-        
+
+        if( this._isPrevious() ) {
+            this._currentPage--;
+            return this.getNews();
+        }
+
+        return false;
     }
 
-    setCurrentPage() {
+    setCurrentPage( pageNumber ) {
+        if( pageNumber < 1 && pageNumber > this._totalPage ) {
+            throw new Error("Invalid page Number");
+        }
+
+        this._currentPage = pageNumber;
+        return this.getNews();
 
     }
 
-    changeCategory() {
-
+    changeCategory(category) {
+        this._category = category;
+        this._currentPage = 1;
+        return this.getNews();
     }
 
-    search() {
-
+    search( term ) {
+        this._searchTerm = term;
+        return this.getNews();
     }
 
     _getURL() {
@@ -68,5 +87,13 @@ export default class News {
         if(this._currentPage) url += `page=${this._currentPage}`;
 
         return url;
+    }
+
+    _isNext() {
+        return  this._currentPage < this._totalPage;
+    }
+
+    _isPrevious() {
+        return this._currentPage > 1;
     }
 }
