@@ -1,8 +1,8 @@
 import './App.css';
 import React from 'react';
 import Header from './components/Header';
-import { newscategory } from './news';
-import Newslist from './components/Newslist';
+import News, { newscategory } from './news';
+import  Newslist from './components/Newslist';
 import Pagination from './components/pagination';
 import Loading from './components/Loading';
 import axios from 'axios';
@@ -22,33 +22,39 @@ class App extends React.Component {
   
 
   componentDidMount() {
-    let apiData = process.env.REACT_APP_NEWS_API_KEY;
-      const url = `${process.env.REACT_APP_NEWS_URL}?apiKey=${apiData}&category=${this.state.category}&pageSize=5`;
-      axios.get(url)
-        .then( ( response )=> {
-          this.setState({
-            news: response.data.articles,
-          });
-        })
-        .catch(( e ) => {
-            console.log( e );
-        });
+      // let apiData = process.env.REACT_APP_NEWS_API_KEY;
+      // const url = `${process.env.REACT_APP_NEWS_URL}?apiKey=${apiData}&category=${this.state.category}&pageSize=5`;
+      // axios.get(url)
+      //   .then( ( response )=> {
+      //     this.setState({
+      //       news: response.data.articles,
+      //   });
+      // })
+      // .catch(( e ) => {
+      //       console.log( e );
+      // });
+
+      const news = new News( newscategory.technology);
+
+      news.getNews().then((data) => {
+          console.log(data);
+      });
   }
 
   componentDidUpdate( prevProps, prevState ) {
-    if( prevState.category != this.state.category ) {
-      let apiData = process.env.REACT_APP_NEWS_API_KEY;
-      const url = `${process.env.REACT_APP_NEWS_URL}?apiKey=${apiData}&category=${this.state.category}&pageSize=5`;
-      axios.get(url)
-        .then( ( response )=> {
-          this.setState({
-            news: response.data.articles,
-          });
-        })
-        .catch(( e ) => {
-            console.log( e );
-        });
-    }
+    // if( prevState.category != this.state.category ) {
+    //   let apiData = process.env.REACT_APP_NEWS_API_KEY;
+    //   const url = `${process.env.REACT_APP_NEWS_URL}?apiKey=${apiData}&category=${this.state.category}&pageSize=5`;
+    //   axios.get(url)
+    //     .then( ( response )=> {
+    //       this.setState({
+    //         news: response.data.articles,
+    //       });
+    //     })
+    //     .catch(( e ) => {
+    //         console.log( e );
+    //     });
+    // }
   }
 
   render() {
