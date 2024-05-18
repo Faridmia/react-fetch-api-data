@@ -6,9 +6,22 @@ class Pagination extends Component {
     isEditable: false
   }
   render() {
+
+    const {
+        isPrevious,
+        isNext,
+        category,
+        totalResults,
+        currentPage,
+        totalPage,
+        next,
+        prev
+      } = this.props;
     return (
         <div className='d-flex my-5 align-items-center'>
-            <button className='btn btn-warning'>Previous</button>
+            <button className='btn btn-warning' disabled={!isPrevious} onClick={() => {
+                prev();
+            }}>Previous</button>
             <div className='flex-grow-1 text-center'> 
                 {this.state.isEditable ? (
                     <input type='number' value='1'/>
@@ -24,7 +37,9 @@ class Pagination extends Component {
                     </p>
                 )}
             </div>
-            <button className='btn btn-warning ml-auto'>Next</button>
+            <button className='btn btn-warning ml-auto' disabled={!isNext} onClick={() => {
+                next();
+            }}>Next</button>
         </div>
     )
   }

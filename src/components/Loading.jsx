@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-function Spinner() {
+function Loading() {
     return (
         <div className='d-flex align-items-center'>
             <strong>Loading....</strong>
@@ -11,6 +11,6 @@ function Spinner() {
     )
 }
 
-export default Spinner;
+export default Loading;
 
 

@@ -5,59 +5,86 @@ import News, { newscategory } from './news';
 import  Newslist from './components/Newslist';
 import Pagination from './components/pagination';
 import Loading from './components/Loading';
-import axios from 'axios';
+
+const news = new News( newscategory.technology);
 
 
 class App extends React.Component {
 
   state = {
-    news: [],
-    category: newscategory.technology
-  }
-
-  changeCategory = ( category ) => {
-     this.setState( { category } );
+    data: {},
+    isLoading: true
   }
 
   
+  changeCategory = ( category ) => {
+    this.setState( { category } );
+  };
+
+ 
 
   componentDidMount() {
-      // let apiData = process.env.REACT_APP_NEWS_API_KEY;
-      // const url = `${process.env.REACT_APP_NEWS_URL}?apiKey=${apiData}&category=${this.state.category}&pageSize=5`;
-      // axios.get(url)
-      //   .then( ( response )=> {
-      //     this.setState({
-      //       news: response.data.articles,
-      //   });
-      // })
-      // .catch(( e ) => {
-      //       console.log( e );
-      // });
+      
+      news.getNews()
+        .then( ( data ) => {
+            console.log( data);
+            this.setState( { data,isLoading: false } );
+        })
+        .catch( ( e ) => {
+          this.setState({ isLoading: false });
+          console.log( e)
 
-      const news = new News( newscategory.technology);
+      });
+      
+  }
 
-      news.getNews().then((data) => {
-          console.log(data);
+
+  next = () => {
+      if( this.state.data.isNext) {
+          this.setState({
+            isLoading: true
+          })
+      }
+
+      news.next()
+        .then( ( data ) => {
+          this.setState( { data,isLoading: false } );
+      })
+      .catch( ( e ) => {
+        this.setState({ isLoading: false });
+        console.log( e)
       });
   }
 
-  componentDidUpdate( prevProps, prevState ) {
-    // if( prevState.category != this.state.category ) {
-    //   let apiData = process.env.REACT_APP_NEWS_API_KEY;
-    //   const url = `${process.env.REACT_APP_NEWS_URL}?apiKey=${apiData}&category=${this.state.category}&pageSize=5`;
-    //   axios.get(url)
-    //     .then( ( response )=> {
-    //       this.setState({
-    //         news: response.data.articles,
-    //       });
-    //     })
-    //     .catch(( e ) => {
-    //         console.log( e );
-    //     });
-    // }
-  }
+  prev = () => {
+    if( this.state.data.isPrevious) {
+        this.setState({
+          isLoading: true
+        })
+    }
+
+    news.prev()
+      .then( ( data ) => {
+        this.setState( { data,isLoading: false } );
+    })
+    .catch( ( e ) => {
+      this.setState({ isLoading: false });
+      console.log( e)
+    });
+}
+
+
 
   render() {
+    const {
+      article,
+      isPrevious,
+      isNext,
+      category,
+      totalResults,
+      currentPage,
+      totalPage
+    } = this.state.data;
     return (
       <div className="container">
           <div className="row">
@@ -71,8 +98,23 @@ class App extends React.Component {
                         {1} page of {100}
                     </p>
                 </div>
-                <Newslist news={this.state.news} />
-                <Pagination />
+                { this.state.isLoading ? (
+                  <Loading />
+                ) : (
+                  <div>
+                  <Newslist news={this.state.data.article} />
+                  <Pagination 
+                    next={this.next} 
+                    prev={this.prev}
+                    isPrevious={isPrevious}
+                    isNext={isNext}
+                    totalPage={totalPage}
+                    currentPage={currentPage}
+                     />
+                  </div>
+                )}
+                
+                
                 <Loading />
               </div>
           </div>

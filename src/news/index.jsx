@@ -23,16 +23,19 @@ export default class News {
 
     async getNews() {
         try{
-            const { data } = axios.get(this._getURL());
+            const { data } = await axios.get(this._getURL());
+            console.log(data)
             this._totalPage = Math.ceil( data.totalResults / this._pageSize );
 
             return {
                 article: data.articles,
+                isNext: this._isNext(),
+                isPrevious: this._isPrevious(),
                 totalPage: this._totalPage,
                 currentPage: this._currentPage,
                 category: this._category,
-                totalResults: data.totalResults
-            }
+                totalResults: data.totalResults,
+            };
 
         } catch( e ) {
             throw new Error(e);
