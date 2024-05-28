@@ -5,6 +5,27 @@ class Pagination extends Component {
   state = {
     isEditable: false
   }
+
+  goToPage = () => {
+    this.setState({ isLoading: true });
+    news.setCurrentPage( this.state.data.currentPage)
+        .then( ( data) => {
+            this.setState({ data, isLoading: false });
+        })
+        .catch((e) => {
+            console.log(e);
+            this.setState({ isLoading: false });
+        });
+  };
+
+  handlePageChange = ( value ) => {
+    this.setState({
+        data: {
+            ... this.state.data,
+            currentPage: Number.parseInt( value )
+        },
+    });
+  }
   render() {
 
     const {
@@ -15,7 +36,9 @@ class Pagination extends Component {
         currentPage,
         totalPage,
         next,
-        prev
+        prev,
+        handlePageChange,
+        goToPage
       } = this.props;
     return (
         <div className='d-flex my-5 align-items-center'>
@@ -24,14 +47,22 @@ class Pagination extends Component {
             }}>Previous</button>
             <div className='flex-grow-1 text-center'> 
                 {this.state.isEditable ? (
-                    <input type='number' value='1'/>
+                    <input type='number' value={currentPage} 
+                    onChange={(e) => handlePageChange(e.target.value )}
+                    onKeyPress={( e ) => {
+                        if( e.key === 'Enter') {
+                            goToPage();
+                            this.setState({ isEditable: false });
+                        }
+                    }}
+                    />
                 ): (
                     <p style={{ userSelect: 'none', lineHeight: '1.1' }} title= 'double tap to userSelect' 
                         onDoubleClick={ () => {
                             this.setState({isEditable: !this.state.isEditable})
                         }}
                     >
-                        {1} of {100}
+                        {currentPage} of {totalPage}
                         <br/ >
                         <small>Double tap to edit</small>
                     </p>

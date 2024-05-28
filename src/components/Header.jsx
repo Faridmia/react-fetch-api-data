@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { newscategory } from '../news';
+import News, { newscategory } from '../news';
 
 export class Header extends Component {
   state = {
@@ -11,8 +11,11 @@ export class Header extends Component {
   };
 
   handleKeyPress = (e) => {
-    this.setState({ searchTerm: e.target.value });
+    if( e.key === 'Enter') {
+      this.props.search(this.state.searchTerm);
+    }
   };
+
 
   render() {
     const { category, changeCategory } = this.props;

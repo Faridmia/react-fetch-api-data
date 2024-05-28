@@ -17,7 +17,7 @@ class App extends React.Component {
   }
 
   
-  changeCategory = ( category ) => {
+  changeCategory2 = ( category ) => {
     this.setState( { category } );
   };
 
@@ -27,7 +27,7 @@ class App extends React.Component {
       
       news.getNews()
         .then( ( data ) => {
-            console.log( data);
+           
             this.setState( { data,isLoading: false } );
         })
         .catch( ( e ) => {
@@ -75,6 +75,54 @@ class App extends React.Component {
 
 
 
+search = ( searchTerm ) => {
+  this.setState({ isLoading: true })
+
+  news.search(searchTerm)
+    .then( ( data ) => {
+        this.setState({ data, isLoading: false })
+    })
+    .catch( ( e ) => {
+      this.setState({ isLoading: false });
+      console.log( e)
+    });
+};
+
+handlePageChange = ( value ) => {
+  this.setState({
+      data: {
+          ... this.state.data,
+          currentPage: Number.parseInt( value )
+      },
+  });
+}
+
+goToPage = () => {
+  this.setState({ isLoading: true });
+  news.setCurrentPage( this.state.data.currentPage)
+      .then( ( data) => {
+        this.setState({ data, isLoading: false });
+      })
+      .catch((e) => {
+          console.log(e);
+          this.setState({ isLoading: false });
+      });
+};
+
+changeCategory = ( category ) => {
+  this.setState({ isLoading: true });
+
+  news.changeCategory(category)
+    .then( ( data ) => {
+      console.log( data);
+        this.setState({ data, isLoading: false })
+    })
+    .catch( ( e ) => {
+      this.setState({ isLoading: false });
+      console.log( e)
+    });
+};
+
   render() {
     const {
       article,
@@ -83,26 +131,30 @@ class App extends React.Component {
       category,
       totalResults,
       currentPage,
-      totalPage
+      totalPage,
     } = this.state.data;
     return (
       <div className="container">
           <div className="row">
               <div className="col-sm-6 offset-md-3">
-                <Header category={this.state.category} changeCategory={this.changeCategory}/>
+                <Header 
+                  category={category} 
+                  changeCategory={this.changeCategory}
+                  search={this.search}
+                  />
                 <div className='d-flex'>
                     <p className='text-black-50'>
-                        About {0} results found
+                        About {totalResults} results found
                     </p>
                     <p className='text-black-50 ml-auto'>
-                        {1} page of {100}
+                        {currentPage} page of {totalPage}
                     </p>
                 </div>
                 { this.state.isLoading ? (
                   <Loading />
                 ) : (
                   <div>
-                  <Newslist news={this.state.data.article} />
+                  <Newslist news={article} />
                   <Pagination 
                     next={this.next} 
                     prev={this.prev}
@@ -110,11 +162,11 @@ class App extends React.Component {
                     isNext={isNext}
                     totalPage={totalPage}
                     currentPage={currentPage}
+                    handlePageChange={this.handlePageChange}
+                    goToPage={this.goToPage}
                      />
                   </div>
                 )}
-                
-                
                 <Loading />
               </div>
           </div>

@@ -24,7 +24,7 @@ export default class News {
     async getNews() {
         try{
             const { data } = await axios.get(this._getURL());
-            console.log(data)
+           
             this._totalPage = Math.ceil( data.totalResults / this._pageSize );
 
             return {
@@ -69,6 +69,8 @@ export default class News {
         return this.getNews();
 
     }
+
+   
 
     changeCategory(category) {
         this._category = category;
